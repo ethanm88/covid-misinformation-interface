@@ -6,6 +6,7 @@
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
     <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
     crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script type="text/javascript" src="js/papaparse.min.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"/>
@@ -15,10 +16,10 @@
   <body class="sans-serif">
 
     <section class="cf pt5 w-60 middle">
-      <div class="w-100 mb3 tc f3">
-        <a href="#" class="link black dim br-100 ba pa1">&nbsp;&#8249;&nbsp;</a>
+      <div class="w-100 mb4 tc f3">
+        <a id="prev" href="#" class="link black dim br-100 ba pa1">&nbsp;&#8249;&nbsp;</a>
         Round <span id="index-span">1</span> / <span id="index-span-total">5</span>
-        <a href="#" class="link black dim br-100 ba pa1">&nbsp;&#8250;&nbsp;</a>
+        <a id="next" href="#" class="link black dim br-100 ba pa1">&nbsp;&#8250;&nbsp;</a>
       </div>
       <div class="fl w-45">
         <div class="mb3 ba br2 pa2">
@@ -39,22 +40,34 @@
       <div class="fr w-45">
         <div class="mb3">
           <p class="f2 mt1 mb1 fw4">
-            Is the tweet a violation?
+            Is the tweet a violation? <button id="guidelines-button" class="ml2 button-55" role="button">Guidelines</button>
           </p>
-          <p class="f3 mt2 fw3">Treatment: <span class="bb b--gold bw2">abc</span></p>
-          <input class="mb3" type="radio" id="radio-1" name="violation" value=1>
+          <p class="f3 mt2 fw3">Treatment: <span id="treatment-span-2" class="bb b--gold bw2">abc</span></p>
+          <input class="mb3" type="radio" id="radio-1" name="violation" value='1'>
           <label class="fw3 f3" for="radio-1">1 - clearly not violating</label><br>
-          <input class="mb3" type="radio" id="radio-2" name="violation" value=2>
+          <input class="mb3" type="radio" id="radio-2" name="violation" value='2'>
           <label class="fw3 f3" for="radio-2">2 - probably not violating</label><br>
-          <input class="mb3" type="radio" id="radio-3" name="violation" value=3>
+          <input class="mb3" type="radio" id="radio-3" name="violation" value='3'>
           <label class="fw3 f3" for="radio-3">3 - unclear</label><br>
-          <input class="mb3" type="radio" id="radio-4" name="violation" value=4>
+          <input class="mb3" type="radio" id="radio-4" name="violation" value='4'>
           <label class="fw3 f3" for="radio-4">4 - most likely violating</label><br>
-          <input class="mb3" type="radio" id="radio-5" name="violation" value=5>
+          <input class="mb3" type="radio" id="radio-5" name="violation" value='5'>
           <label class="fw3 f3" for="radio-5">5 - clearly violating</label><br>
         </div>
       </div>
     </section>
+    <section class="cf w-60 middle">
+      <button id="submit-button" class="mt2 button-55 fr">Download Your Annotations</button>
+    </section>
+    <div id="guidelines" class="ba bw1 bg-white overflow">
+      <ul>
+            <p class="f4"><span>1</span> - ...</p>
+            <p class="mt1 f4"><span>2</span> - ...</p>
+            <p class="mt1 f4"><span>3</span> - ...</p>
+            <p class="mt1 f4"><span>4</span> - ...</p>
+            <p class="mt1 f4"><span>5</span> - ...</p>
+      </ul>
+  </div>
   </body>
   <script type="text/javascript" src="js/index.js"></script>
 </html>
