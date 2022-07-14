@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Covid Misinformation</title>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"></script>
+    <script type="text/javascript" src="js/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.12.0/css/tachyons.min.css"/>
+    <link rel="stylesheet" href="css/index.css"> 
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  </head>
+  <body class="sans-serif">
+
+    <section class="cf pt5 w-60 middle">
+      <div class="w-100 mb3 tc f3">
+        <a href="#" class="link black dim br-100 ba pa1">&nbsp;&#8249;&nbsp;</a>
+        Round <span id="index-span">1</span> / <span id="index-span-total">5</span>
+        <a href="#" class="link black dim br-100 ba pa1">&nbsp;&#8250;&nbsp;</a>
+      </div>
+      <div class="fl w-45">
+        <div class="mb3 ba br2 pa2">
+          <p class="f3 mv2 i b">Tweet:</p>
+          <p class="f3 mt0 fw3" id="tweet">
+            placeholder
+          </p>
+        </div>
+        <div class="ba br2 pa2">
+          <p class="f3 tc mv2 b">Stance Classification</p>
+          <p class="f3 tc mt0 mb2 fw3">The tweet <span id="prediction-span" class="red">supports</span> that 
+            <span id="treatment-span" class="bb bw2 b--gold">abc</span> is an effective treatment of Covid-19.</p>
+          <p class="f4 tc mt0 fw3 i ">
+            Marvin is <span id="confidence-span">90%</span> confident about this suggestion.
+          </p>
+        </div>
+      </div>
+      <div class="fr w-45">
+        <div class="mb3">
+          <p class="f2 mt1 mb1 fw4">
+            Is the tweet a violation?
+          </p>
+          <p class="f3 mt2 fw3">Treatment: <span class="bb b--gold bw2">abc</span></p>
+          <input class="mb3" type="radio" id="radio-1" name="violation" value=1>
+          <label class="fw3 f3" for="radio-1">1 - clearly not violating</label><br>
+          <input class="mb3" type="radio" id="radio-2" name="violation" value=2>
+          <label class="fw3 f3" for="radio-2">2 - probably not violating</label><br>
+          <input class="mb3" type="radio" id="radio-3" name="violation" value=3>
+          <label class="fw3 f3" for="radio-3">3 - unclear</label><br>
+          <input class="mb3" type="radio" id="radio-4" name="violation" value=4>
+          <label class="fw3 f3" for="radio-4">4 - most likely violating</label><br>
+          <input class="mb3" type="radio" id="radio-5" name="violation" value=5>
+          <label class="fw3 f3" for="radio-5">5 - clearly violating</label><br>
+        </div>
+      </div>
+    </section>
+  </body>
+  <script type="text/javascript" src="js/index.js"></script>
+</html>
