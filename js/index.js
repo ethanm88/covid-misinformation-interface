@@ -21,7 +21,7 @@ function salience_map(tokens, scores) {
         var word = tokens[i];
         var score = scores[i];
         var color = getcolor(color1, color2, score);
-        html += "<span style='background-color:" + color + "'>" + word + "</span> ";
+        html += "<span style='background-color:" + color + "'>&nbsp;" + word + "&nbsp;</span>";
         // if (score > 0.65) {
         //     html += "<span style='color:white; background-color:" + color + "'>" + word + "</span>";
         // } else {
@@ -68,9 +68,17 @@ $(document).ready(function() {
                 }
                 $("#guidelines").fadeOut(0.2)
                 $("#guidelines-button").html("Guidelines");
-                // console.log(scores);
+
+                $("#progress-bar-span").animate(
+                    {
+                      width: confidence + "%",
+                    },
+                    1000
+                );
+                $("#progress-bar-span").text(confidence + "%");
             }
             display_ith_example(1);
+            
             $("#prev").on("click", function(e) {
                 round_index--;
                 if (round_index < 1) {

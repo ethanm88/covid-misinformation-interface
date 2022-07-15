@@ -5,7 +5,14 @@
 	width: 45%;
 }
 
- 
+progress {
+    padding-right: 10px;
+}
+
+#tweet {
+	word-wrap: break-word;
+}
+
 .button-55 {
 	align-self: center;
 	background-color: #fff;
@@ -52,3 +59,22 @@
 	cursor: all-scroll;
 	width: 400px;
 }
+
+.animated-progress {
+	height: 30px;
+	margin: 20px 10px;
+	position: relative;
+	background-color: rgb(255, 184, 184);
+  }
+  
+  .animated-progress span {
+	height: 100%;
+	/* display: block; */
+	width: 0;
+	color: rgb(255, 251, 251);
+	line-height: 30px;
+	position: absolute;
+	text-align: end;
+	padding-right: 5px;
+	vertical-align: middle; 
+  }
