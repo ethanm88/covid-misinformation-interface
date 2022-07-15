@@ -1,5 +1,5 @@
-var color1 = "#6df3ff";
-var color2 = "#5469f5";
+var color1 = "#FFF0F3";
+var color2 = "#FF4D6D";
 
 function getcolor(color1, color2, percentage) {
     var r1 = parseInt(color1.substring(1, 3), 16);
@@ -21,17 +21,19 @@ function salience_map(tokens, scores) {
         var word = tokens[i];
         var score = scores[i];
         var color = getcolor(color1, color2, score);
-        if (score > 0.85) {
-            html += "<span style='color:white; background-color:" + color + "'>" + word + "</span> ";
-        } else {
-            html += "<span style='background-color:" + color + "'>" + word + "</span> ";
-        }
+        html += "<span style='background-color:" + color + "'>" + word + "</span> ";
+        // if (score > 0.65) {
+        //     html += "<span style='color:white; background-color:" + color + "'>" + word + "</span>";
+        // } else {
+        //     html += "<span style='background-color:" + color + "'>" + word + "</span>";
+        // }
         
     }
+    html += "";
     return html;
 }
 
-var filename = "https://raw.githubusercontent.com/Yao-Dou/covid-misinformation-interface/main/data/covid.csv";
+var filename = "https://raw.githubusercontent.com/edchengg/covid-misinformation-interface/main/data/covid.csv";
 var round_index = 1;
 
 var annotations = {};
