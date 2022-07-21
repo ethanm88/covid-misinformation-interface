@@ -17,7 +17,7 @@ function getcolor(color1, color2, percentage) {
 function salience_map(tokens, scores, span_treatment) {
     var html = "";
     for (var i = 0; i < tokens.length; i++) {
-        if (span_treatment[0] <= i && i <= span_treatment[1]) {
+        if (span_treatment[0] <= i && i <= span_treatment[1]-1) {
             var word = tokens[i];
             var color = "#ffba08";
             html += "<u style='text-decoration-color:" + color + "'>&nbsp;" + word + "&nbsp;</u>";
