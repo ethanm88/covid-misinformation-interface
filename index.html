@@ -18,13 +18,13 @@
     <section class="cf pt5 w-60 middle">
       <div class="w-100 mb4 tc f3">
         <a id="prev" href="#" class="link black dim br-100 ba pa1">&nbsp;&#8249;&nbsp;</a>
-        Round <span id="index-span">1</span> / <span id="index-span-total">5</span>
+        Round <span id="index-span">1</span> / <span id="index-span-total">36</span>
         <a id="next" href="#" class="link black dim br-100 ba pa1">&nbsp;&#8250;&nbsp;</a>
       </div>
       <div class="fl w-45">
         <div class="mb3 ba br2 pa2">
           <p class="f3 mv2 i b">Tweet:</p>
-          <p class="f3 mt0 fw3" id="tweet">
+          <p class="f3 mt0 fw3 w-100" id="tweet">
             placeholder
           </p>
         </div>
@@ -33,9 +33,18 @@
           <p class="f3 tc mt0 mb2 fw3">The tweet <span id="prediction-span" class="red">supports</span> that 
             <span id="treatment-span" class="bb bw2 b--gold">abc</span> is an effective treatment of Covid-19.</p>
           <p class="f4 tc mt0 fw3 i ">
-            Marvin is <span id="confidence-span">90%</span> confident about this suggestion.
+            Marvin is <span STYLE="font-weight:bold" id="confidence-span">90%</span> confident about this suggestion.
           </p>
+          <!-- <div class="bg-washed-red br-pill h1 overflow-y-hidden">
+            <div class="bg-dark-red br-pill h1 shadow-1 w-10"></div>
+          </div> -->
+          
+          <div id="progress-bar" class="animated-progress">
+            <span id="progress-bar-span" class="bg-red"></span>
+          </div>
+
         </div>
+
       </div>
       <div class="fr w-45">
         <div class="mb3">
@@ -61,11 +70,11 @@
     </section>
     <div id="guidelines" class="ba bw1 bg-white overflow">
       <ul>
-            <p class="f4"><span>1</span> - ...</p>
-            <p class="mt1 f4"><span>2</span> - ...</p>
-            <p class="mt1 f4"><span>3</span> - ...</p>
-            <p class="mt1 f4"><span>4</span> - ...</p>
-            <p class="mt1 f4"><span>5</span> - ...</p>
+            <p class="f4"><span STYLE="font-weight:bold">1</span> - Clearly not in violation of Twitter's policy.</p>
+            <p class="mt1 f4"><span STYLE="font-weight:bold">2</span> - Probably not violating the policy, but does seem to suggest a questionable treatment may be effective. For example, the treatment is in clinical trials at the time the tweet was written, or the tweet does not make a strong claim about effectiveness.</p>
+            <p class="mt1 f4"><span STYLE="font-weight:bold">3</span> - Unclear whether or not this violates the policy.</p>
+            <p class="mt1 f4"><span STYLE="font-weight:bold">4</span> - Most likely violating Twitter's policy. Seems like the treatment is not effective based on official sources or reputable news organizations, and the tweet is making a relatively strong claim that the treatment is effective.</p>
+            <p class="mt1 f4"><span STYLE="font-weight:bold">5</span> - Clearly in violation of Twitter's policy.</p>
       </ul>
   </div>
   </body>

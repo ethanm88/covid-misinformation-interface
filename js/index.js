@@ -1,5 +1,5 @@
-var color1 = "#6df3ff";
-var color2 = "#5469f5";
+var color1 = "#ffffff";
+var color2 = "#d90429";
 
 function getcolor(color1, color2, percentage) {
     var r1 = parseInt(color1.substring(1, 3), 16);
@@ -14,24 +14,29 @@ function getcolor(color1, color2, percentage) {
     return "#" + (r.length == 1 ? "0" + r : r) + (g.length == 1 ? "0" + g : g) + (b.length == 1 ? "0" + b : b);
 }
 
-function salience_map(tokens, scores) {
+function salience_map(tokens, scores, span_treatment) {
     var html = "";
     for (var i = 0; i < tokens.length; i++) {
-        // get the word from the array
-        var word = tokens[i];
-        var score = scores[i];
-        var color = getcolor(color1, color2, score);
-        if (score > 0.85) {
-            html += "<span style='color:white; background-color:" + color + "'>" + word + "</span> ";
+        if (span_treatment[0] <= i && i <= span_treatment[1]-1) {
+            var word = tokens[i];
+            var color = "#ffba08";
+            html += "<u style='text-decoration-color:" + color + "'>&nbsp;" + word + "&nbsp;</u>";
         } else {
-            html += "<span style='background-color:" + color + "'>" + word + "</span> ";
+            // get the word from the array
+            var word = tokens[i];
+            var score = scores[i];
+            if (score < 0.2){
+                score = -1
+            }
+            var color = getcolor(color1, color2, score);
+            html += "<span style='background-color:" + color + "'>&nbsp;" + word + "&nbsp;</span>";
         }
-        
     }
+    html += "";
     return html;
 }
 
-var filename = "https://raw.githubusercontent.com/Yao-Dou/covid-misinformation-interface/main/data/covid.csv";
+var filename = "https://raw.githubusercontent.com/edchengg/covid-misinformation-interface/main/data/tweet_saliency_map.csv";
 var round_index = 1;
 
 var annotations = {};
@@ -47,13 +52,19 @@ $(document).ready(function() {
                 var tweet = example[0];
                 var treatment = example[1];
                 var confidence = example[3]
+                var span_treatment = example[5].split(" ");
+                
                 $("#confidence-span").html(confidence+"%");
                 var scores = example[4].split(" ");
                 // scores to float
                 for (var i = 0; i < scores.length; i++) {
                     scores[i] = parseFloat(scores[i]);
                 }
-                $("#tweet").html(salience_map(tweet.split(" "), scores));
+                // span to int
+                for (var i = 0; i < span_treatment.length; i++) {
+                    span_treatment[i] = parseInt(span_treatment[i]);
+                }
+                $("#tweet").html(salience_map(tweet.split(" "), scores, span_treatment));
                 $("#treatment-span").html(treatment);
                 $("#treatment-span-2").html(treatment);
                 // check if round_index is in annotations
@@ -66,9 +77,17 @@ $(document).ready(function() {
                 }
                 $("#guidelines").fadeOut(0.2)
                 $("#guidelines-button").html("Guidelines");
-                // console.log(scores);
+
+                $("#progress-bar-span").animate(
+                    {
+                      width: confidence + "%",
+                    },
+                    1000
+                );
+                $("#progress-bar-span").text(confidence + "%");
             }
             display_ith_example(1);
+            
             $("#prev").on("click", function(e) {
                 round_index--;
                 if (round_index < 1) {
