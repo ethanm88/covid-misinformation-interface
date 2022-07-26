@@ -16,19 +16,20 @@
   <body class="sans-serif">
 
     <section class="cf pt5 w-60 middle">
-      <div class="w-100 mb4 tc f3">
+      <div class="w-100 mb4 tc f3 cf">
         <a id="prev" href="#" class="link black dim br-100 ba pa1">&nbsp;&#8249;&nbsp;</a>
         Round <span id="index-span">1</span> / <span id="index-span-total">36</span>
         <a id="next" href="#" class="link black dim br-100 ba pa1">&nbsp;&#8250;&nbsp;</a>
+        <span class="fr w-20">Timer: <span class="timer">00:00</span></span>
       </div>
       <div class="fl w-45">
         <div class="mb3 ba br2 pa2">
-          <p class="f3 mv2 i b">Tweet:</p>
+          <p class="f3 mv2 b">Tweet <span id="tweet-link" class="pointer blue f4">[link]</span>:</p>
           <p class="f3 mt0 fw3 w-100" id="tweet">
             placeholder
           </p>
         </div>
-        <div class="ba br2 pa2">
+        <div class="ba br2 pa2" id="classification">
           <p class="f3 tc mv2 b">Stance Classification</p>
           <p class="f3 tc mt0 mb2 fw3">The tweet <span id="prediction-span" class="red">supports</span> that 
             <span id="treatment-span" class="bb bw2 b--gold">abc</span> is an effective treatment of Covid-19.</p>
