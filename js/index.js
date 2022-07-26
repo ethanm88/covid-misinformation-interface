@@ -36,6 +36,23 @@ function salience_map(tokens, scores, span_treatment) {
     return html;
 }
 
+function underline(tokens, scores, span_treatment) {
+    var html = "";
+    for (var i = 0; i < tokens.length; i++) {
+        if (span_treatment[0] <= i && i <= span_treatment[1]-1) {
+            var word = tokens[i];
+            var color = "#ffba08";
+            html += "<u style='text-decoration-color:" + color + "'>&nbsp;" + word + "&nbsp;</u>";
+        } else {
+            // get the word from the array
+            var word = tokens[i];
+            html += word + " ";
+        }
+    }
+    html += "";
+    return html;
+}
+
 function display_time(seconds) {
     var minutes = Math.floor(seconds / 60);
     var seconds = seconds % 60;
@@ -70,7 +87,7 @@ $(document).ready(function() {
             for (var i = 1; i <= data_length; i++) {
                 annotation_formats[i] = Math.random()
             }
-            console.log(annotation_formats);
+            // console.log(annotation_formats);
 
             function display_ith_example() {
 
@@ -104,10 +121,10 @@ $(document).ready(function() {
                     $("#tweet").html(salience_map(tweet.split(" "), scores, span_treatment));
                 } else if (annotation_formats[round_index] < 0.66) {
                     $("#classification").show();
-                    $("#tweet").html(tweet);
+                    $("#tweet").html(underline(tweet.split(" "), scores, span_treatment));
                 } else {
                     $("#classification").hide();
-                    $("#tweet").html(tweet);
+                    $("#tweet").html(underline(tweet.split(" "), scores, span_treatment));
                 }
 
                 $("#treatment-span").html(treatment);
@@ -165,7 +182,7 @@ $(document).ready(function() {
     
             $('input[type=radio][name=violation]').change(function() {
                 annotations[round_index] = this.value;
-                console.log(annotations);
+                // console.log(annotations);
             });
 
             $("#guidelines-button").on("click", function(e) {
@@ -198,17 +215,17 @@ $(document).ready(function() {
                     data[i] = {"link": annotation_links[i], "annotation": annotations[i], "time": timer[i], "format": format}
                 }
                 console.log(data)
-                    // download the annotations as json
-                // var json = JSON.stringify(data);
-                // var blob = new Blob([json], {type: "application/json"});
-                // var url = URL.createObjectURL(blob);
-                // var a = document.createElement("a");
-                // a.href = url;
-                // a.download = "annotations.json";
-                // document.body.appendChild(a);
-                // a.click();
-                // document.body.removeChild(a);
-                // URL.revokeObjectURL(url);
+                // download the annotations as json
+                var json = JSON.stringify(data);
+                var blob = new Blob([json], {type: "application/json"});
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement("a");
+                a.href = url;
+                a.download = "annotations.json";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
             });
 
             $( "#guidelines" ).draggable();
