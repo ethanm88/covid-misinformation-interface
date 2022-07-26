@@ -54,31 +54,37 @@ var filename = "https://raw.githubusercontent.com/edchengg/covid-misinformation-
 var round_index = 1;
 
 var annotations = {};
+var annotation_formats = {};
+var annotation_links = {}
 var timer = {}
 var timer_interval = null
+var data_length = 0;
 
 $(document).ready(function() {
     Papa.parse(filename, {
         worker: true,
         download: true,
         complete: function (results) {
-            function display_ith_example(i) {
-                // random sample from true and false
-                var whether_display_cls = Math.random() < 0.5;
-                if (whether_display_cls) {
-                    $("#classification").show();
-                } else {
-                    $("#classification").hide();
-                }
+            data_length = results.data.length - 1;
+            // iterate through 1 to data_length
+            for (var i = 1; i <= data_length; i++) {
+                annotation_formats[i] = Math.random()
+            }
+            console.log(annotation_formats);
+
+            function display_ith_example() {
 
                 clearInterval(timer_interval);
                 var data = results.data;
-                var example = data[i];
+                
+                var example = data[round_index];
                 var tweet = example[0];
                 var treatment = example[1];
                 var confidence = example[3]
                 var span_treatment = example[5].split(" ");
                 var link = example[6];
+
+                annotation_links[round_index] = link
 
                 // add link to id=tweet-link
                 $("#tweet-link").attr("href", link);
@@ -93,11 +99,14 @@ $(document).ready(function() {
                 for (var i = 0; i < span_treatment.length; i++) {
                     span_treatment[i] = parseInt(span_treatment[i]);
                 }
-
-                var whether_display_salience = Math.random() < 0.5;
-                if (whether_display_salience) {
+                if (annotation_formats[round_index] < 0.33) {
+                    $("#classification").show();
                     $("#tweet").html(salience_map(tweet.split(" "), scores, span_treatment));
+                } else if (annotation_formats[round_index] < 0.66) {
+                    $("#classification").show();
+                    $("#tweet").html(tweet);
                 } else {
+                    $("#classification").hide();
                     $("#tweet").html(tweet);
                 }
 
@@ -132,7 +141,7 @@ $(document).ready(function() {
                 );
                 $("#progress-bar-span").text(confidence + "%");
             }
-            display_ith_example(1);
+            display_ith_example();
             
             $("#prev").on("click", function(e) {
                 round_index--;
@@ -140,7 +149,7 @@ $(document).ready(function() {
                     round_index = 1;
                 } else {
                     $("#index-span").html(round_index);
-                    display_ith_example(round_index)
+                    display_ith_example()
                 }
             });
 
@@ -150,7 +159,7 @@ $(document).ready(function() {
                     round_index = results.data.length - 1;
                 } else {
                     $("#index-span").html(round_index);
-                    display_ith_example(round_index)
+                    display_ith_example()
                 }
             });
     
@@ -176,28 +185,30 @@ $(document).ready(function() {
             });
 
             $("#submit-button").on("click", function(e) {
-                // download the annotations as json
-                var json = JSON.stringify(annotations);
-                var blob = new Blob([json], {type: "application/json"});
-                var url = URL.createObjectURL(blob);
-                var a = document.createElement("a");
-                a.href = url;
-                a.download = "annotations.json";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                // download the timer as json
-                var json = JSON.stringify(timer);
-                var blob = new Blob([json], {type: "application/json"});
-                var url = URL.createObjectURL(blob);
-                var a = document.createElement("a");
-                a.href = url;
-                a.download = "timer.json";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
+                let data = {}
+                // iterate from 1 to data_length
+                for (var i = 1; i <= data_length; i++) {
+                    if (annotation_formats[i] < 0.33) {
+                        format = "show both"
+                    } else if (annotation_formats[i] < 0.66) {
+                        format = "show classifcation"
+                    } else {
+                        format = "show tweet"
+                    }
+                    data[i] = {"link": annotation_links[i], "annotation": annotations[i], "time": timer[i], "format": format}
+                }
+                console.log(data)
+                    // download the annotations as json
+                // var json = JSON.stringify(data);
+                // var blob = new Blob([json], {type: "application/json"});
+                // var url = URL.createObjectURL(blob);
+                // var a = document.createElement("a");
+                // a.href = url;
+                // a.download = "annotations.json";
+                // document.body.appendChild(a);
+                // a.click();
+                // document.body.removeChild(a);
+                // URL.revokeObjectURL(url);
             });
 
             $( "#guidelines" ).draggable();
