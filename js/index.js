@@ -82,6 +82,7 @@ $(document).ready(function() {
         worker: true,
         download: true,
         complete: function (results) {
+            $("#index-span-total").html(results.data.length);
             data_length = results.data.length - 1;
             // iterate through 1 to data_length
             for (var i = 1; i <= data_length; i++) {
