@@ -67,12 +67,12 @@ function display_time(seconds) {
     $(".timer").html(minutes + ":" + seconds);
 }
 
-var filename = "https://raw.githubusercontent.com/edchengg/covid-misinformation-interface/main/data/tweet_saliency_map.csv";
+var filename = "https://raw.githubusercontent.com/edchengg/covid-misinformation-interface/main/data/tweet_saliency_map_withid.csv";
 var round_index = 1;
 
 var annotations = {};
 var annotation_formats = {};
-var annotation_links = {}
+var annotation_ids = {}
 var timer = {}
 var timer_interval = null
 var data_length = 0;
@@ -100,9 +100,15 @@ $(document).ready(function() {
                 var treatment = example[1];
                 var confidence = example[3]
                 var span_treatment = example[5].split(" ");
-                var link = example[6];
+                var ids = example[6];
+                if (ids.includes("NA")){
+                    var link = "https://twitter.com/erg1951/status/13420529946328432";
+                } else {
+                    var link = "https://twitter.com/erg1951/status/" + ids;
+                    
+                }
 
-                annotation_links[round_index] = link
+                annotation_ids[round_index] = ids
 
                 // add link to id=tweet-link
                 $("#tweet-link").attr("href", link);
@@ -213,7 +219,7 @@ $(document).ready(function() {
                     } else {
                         format = "show tweet"
                     }
-                    data[i] = {"link": annotation_links[i], "annotation": annotations[i], "time": timer[i], "format": format}
+                    data[i] = {"ids": annotation_ids[i], "annotation": annotations[i], "time": timer[i], "format": format}
                 }
                 console.log(data)
                 // download the annotations as json
