@@ -71,6 +71,7 @@ progress {
 	height: 30px;
 	margin: 20px 10px;
 	position: relative;
+	line-height: 30px;
 	background-color: rgb(157, 179, 245);
 }
   

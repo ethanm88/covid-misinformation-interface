@@ -20,7 +20,7 @@ function salience_map_adaptive(tokens, scores, span_treatment) {
     for (var i = 0; i < tokens.length; i++) {
         if (span_treatment[0] <= i && i <= span_treatment[1]-1) {
             var word = tokens[i];
-            var color = "#ff8fa3";
+            var color = "#ffba08";
             html += "<u style='text-decoration-color:" + color + "'>&nbsp;" + word + "&nbsp;</u>";
         } else {
             // get the word from the array
@@ -141,7 +141,7 @@ $(document).ready(function() {
                 var span_treatment = example[8].split(" ");
                 var ids = example[9];
                 var adaptive = example[10];
-                // var adaptive = 1;
+                //var adaptive = 0;
                 if (ids.includes("NA")){
                     var link = "https://twitter.com/erg1951/status/13420529946328432";
                 } else {
@@ -183,10 +183,11 @@ $(document).ready(function() {
                     $("#classification").show();
                     if (adaptive == 1){
                         $("#classification2").hide();
-                        $("#tweet").html(salience_map(tweet.split(" "), score1, span_treatment));
+                        $("#tweet").html(salience_map_adaptive(tweet.split(" "), score1, span_treatment));
+                        // $("#tweet").html(salience_map(tweet.split(" "), score1, span_treatment));
                     } else {
-                        $("#classification2").show();
                         $("#tweet").html(salience_map_adaptive(tweet.split(" "), score2, span_treatment));
+                        $("#classification2").show();
                     }
                 } else if (annotation_formats[round_index] < 0.66) {
                     // confidence
