@@ -1,5 +1,6 @@
 var color1 = "#ffffff";
 var color2 = "#d90429";
+var color3 = "#0077b6";
 
 function getcolor(color1, color2, percentage) {
     var r1 = parseInt(color1.substring(1, 3), 16);
@@ -12,6 +13,37 @@ function getcolor(color1, color2, percentage) {
     var g = Math.round((g1 + (g2 - g1) * percentage)).toString(16);
     var b = Math.round((b1 + (b2 - b1) * percentage)).toString(16);
     return "#" + (r.length == 1 ? "0" + r : r) + (g.length == 1 ? "0" + g : g) + (b.length == 1 ? "0" + b : b);
+}
+
+function salience_map_adaptive(tokens, scores, span_treatment) {
+    var html = "";
+    for (var i = 0; i < tokens.length; i++) {
+        if (span_treatment[0] <= i && i <= span_treatment[1]-1) {
+            var word = tokens[i];
+            var color = "#ff8fa3";
+            html += "<u style='text-decoration-color:" + color + "'>&nbsp;" + word + "&nbsp;</u>";
+        } else {
+            // get the word from the array
+            var word = tokens[i];
+            var score = scores[i];
+            
+            if (score > 0){
+                //var color = getcolor(color1, color2, score);
+                var color  = "#ff758f"
+            } else if (score < 0) {
+                // console.log(score);
+                // score = Math.abs(score);
+                // console.log(score);
+                // var color = getcolor(color1, color3, score);
+                var color = "#90e0ef";
+            } else {
+                var color = "#ffffff";
+            }
+            html += "<span style='background-color:" + color + "'>&nbsp;" + word + "&nbsp;</span>";
+        }
+    }
+    html += "";
+    return html;
 }
 
 function salience_map(tokens, scores, span_treatment) {
@@ -36,7 +68,7 @@ function salience_map(tokens, scores, span_treatment) {
     return html;
 }
 
-function underline(tokens, scores, span_treatment) {
+function underline(tokens, span_treatment) {
     var html = "";
     for (var i = 0; i < tokens.length; i++) {
         if (span_treatment[0] <= i && i <= span_treatment[1]-1) {
@@ -53,10 +85,11 @@ function underline(tokens, scores, span_treatment) {
     return html;
 }
 
-function display_time(seconds) {
-    var minutes = Math.floor(seconds / 60);
-    var seconds = seconds % 60;
+function display_time(milliseconds) {
+    var minutes = Math.floor(milliseconds / 6000);
+    var seconds = Math.floor(milliseconds /100) % 60;
     // display seconds 00
+
     if (seconds < 10) {
         seconds = "0" + seconds;
     }
@@ -64,10 +97,11 @@ function display_time(seconds) {
     if (minutes < 10) {
         minutes = "0" + minutes;
     }
+
     $(".timer").html(minutes + ":" + seconds);
 }
 
-var filename = "https://raw.githubusercontent.com/edchengg/covid-misinformation-interface/main/data/tweet_saliency_map_withid.csv";
+var filename = "https://raw.githubusercontent.com/edchengg/covid-misinformation-interface/main/data/tweet_lime_withid.csv";
 var round_index = 1;
 
 var annotations = {};
@@ -98,9 +132,16 @@ $(document).ready(function() {
                 var example = data[round_index];
                 var tweet = example[0];
                 var treatment = example[1];
-                var confidence = example[3]
-                var span_treatment = example[5].split(" ");
-                var ids = example[6];
+                var confidence1 = example[2];
+                var stance1 = example[3];
+                var score1 = example[4].split(" ");
+                var confidence2 = example[5];
+                var stance2 = example[6];
+                var score2 = example[7].split(" ");
+                var span_treatment = example[8].split(" ");
+                var ids = example[9];
+                var adaptive = example[10];
+                // var adaptive = 1;
                 if (ids.includes("NA")){
                     var link = "https://twitter.com/erg1951/status/13420529946328432";
                 } else {
@@ -113,28 +154,54 @@ $(document).ready(function() {
                 // add link to id=tweet-link
                 $("#tweet-link").attr("href", link);
                 
-                $("#confidence-span").html(confidence+"%");
-                var scores = example[4].split(" ");
+                if (stance1 == "Support"){
+                    $("#prediction-span").html("supports");
+                }
+
+                if (stance2 == "Refuting"){
+                    $("#prediction-span2").html("refutes");
+                } else if (stance2 == "No Stance"){
+                    $("#prediction-span2").html("has no stance");
+                }
+
+                $("#confidence-span").html(confidence1+"%");
+                $("#confidence-span2").html(confidence2+"%");
+  
                 // scores to float
-                for (var i = 0; i < scores.length; i++) {
-                    scores[i] = parseFloat(scores[i]);
+                for (var i = 0; i < score1.length; i++) {
+                    score1[i] = parseFloat(score1[i]);
+                }
+                for (var i = 0; i < score2.length; i++) {
+                    score2[i] = parseFloat(score2[i]);
                 }
                 // span to int
                 for (var i = 0; i < span_treatment.length; i++) {
                     span_treatment[i] = parseInt(span_treatment[i]);
                 }
                 if (annotation_formats[round_index] < 0.33) {
+                    // adaptive lime
                     $("#classification").show();
-                    $("#tweet").html(salience_map(tweet.split(" "), scores, span_treatment));
+                    if (adaptive == 1){
+                        $("#classification2").hide();
+                        $("#tweet").html(salience_map(tweet.split(" "), score1, span_treatment));
+                    } else {
+                        $("#classification2").show();
+                        $("#tweet").html(salience_map_adaptive(tweet.split(" "), score2, span_treatment));
+                    }
                 } else if (annotation_formats[round_index] < 0.66) {
+                    // confidence
                     $("#classification").show();
-                    $("#tweet").html(underline(tweet.split(" "), scores, span_treatment));
+                    $("#classification2").hide();
+                    $("#tweet").html(underline(tweet.split(" "), span_treatment));
                 } else {
+                    // human
                     $("#classification").hide();
-                    $("#tweet").html(underline(tweet.split(" "), scores, span_treatment));
+                    $("#classification2").hide();
+                    $("#tweet").html(underline(tweet.split(" "), span_treatment));
                 }
 
                 $("#treatment-span").html(treatment);
+                $("#treatment-span2").html(treatment);
                 $("#treatment-span-2").html(treatment);
                 // check if round_index is in annotations
                 if (annotations[round_index] != undefined) {
@@ -149,21 +216,30 @@ $(document).ready(function() {
                     timer[round_index] = 0;
                 }
                 display_time(timer[round_index]);
+                
                 timer_interval = setInterval(() => {
                     timer[round_index] += 1;
                     seconds = timer[round_index];
                     display_time(seconds);
-                }, 1000);
+                }, 10);
                 $("#guidelines").fadeOut(0.2)
                 $("#guidelines-button").html("Guidelines");
 
                 $("#progress-bar-span").animate(
                     {
-                      width: confidence + "%",
+                      width: confidence1 + "%",
                     },
                     0
                 );
-                $("#progress-bar-span").text(confidence + "%");
+
+                $("#progress-bar-span2").animate(
+                    {
+                      width: confidence2 + "%",
+                    },
+                    0
+                );
+                $("#progress-bar-span").text(confidence1 + "%");
+                $("#progress-bar-span2").text(confidence2 + "%");
             }
             display_ith_example();
             
@@ -213,11 +289,11 @@ $(document).ready(function() {
                 // iterate from 1 to data_length
                 for (var i = 1; i <= data_length; i++) {
                     if (annotation_formats[i] < 0.33) {
-                        format = "show both"
+                        format = "adaptive explanation lime"
                     } else if (annotation_formats[i] < 0.66) {
-                        format = "show classifcation"
+                        format = "confidence"
                     } else {
-                        format = "show tweet"
+                        format = "human"
                     }
                     data[i] = {"ids": annotation_ids[i], "annotation": annotations[i], "time": timer[i], "format": format}
                 }

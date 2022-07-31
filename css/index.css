@@ -66,8 +66,15 @@ progress {
 	position: relative;
 	background-color: rgb(255, 184, 184);
   }
+
+.animated-progress2 {
+	height: 30px;
+	margin: 20px 10px;
+	position: relative;
+	background-color: rgb(157, 179, 245);
+}
   
-  .animated-progress span {
+.animated-progress span {
 	height: 100%;
 	/* display: block; */
 	width: 0;
@@ -77,4 +84,4 @@ progress {
 	text-align: end;
 	padding-right: 5px;
 	vertical-align: middle; 
-  }
+}
