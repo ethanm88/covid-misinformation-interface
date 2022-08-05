@@ -269,6 +269,21 @@ $(document).ready(function() {
                 // console.log(annotations);
             });
 
+            $("#break-button").on("click", function(e) {
+                $(".popup").fadeIn(1);
+                clearInterval(timer_interval);
+                console.log(timer)
+            });
+
+            $("#continue-button").on("click", function(e) {
+                $(".popup").fadeOut(1);
+                timer_interval = setInterval(() => {
+                    timer[round_index] += 1;
+                    seconds = timer[round_index];
+                    display_time(seconds);
+                }, 10);
+            });
+
             $("#guidelines-button").on("click", function(e) {
                 var left  = e.pageX - 60  + "px";
                 var top  = e.pageY + 25 + "px";
@@ -313,5 +328,8 @@ $(document).ready(function() {
             });
 
             $( "#guidelines" ).draggable();
+
+            // hide the popup
+            $(".popup").hide();
         }});
 });
