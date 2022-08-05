@@ -270,7 +270,7 @@ $(document).ready(function() {
             });
 
             $("#break-button").on("click", function(e) {
-                $(".popup").fadeIn(1);
+                $('.popup').css('display', 'flex');
                 clearInterval(timer_interval);
                 console.log(timer)
             });
@@ -328,8 +328,5 @@ $(document).ready(function() {
             });
 
             $( "#guidelines" ).draggable();
-
-            // hide the popup
-            $(".popup").hide();
         }});
 });
