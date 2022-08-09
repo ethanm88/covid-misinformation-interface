@@ -24,19 +24,25 @@
 
     <section class="cf pt5 w-60 middle">
       <div class="w-100 mb4 tc f3 cf">
+        <!-- moving button -->
         <a id="prev" href="#" class="link black dim br-100 ba pa1">&nbsp;&#8249;&nbsp;</a>
         Round <span id="index-span">1</span> / <span id="index-span-total">36</span>
         <a id="next" href="#" class="link black dim br-100 ba pa1">&nbsp;&#8250;&nbsp;</a>
+        <!-- timer -->
         <span class="fr w-15">Timer: <span class="timer">00:00</span></span>
+        <!-- take a break button -->
         <button id="break-button" class="fr button-55" role="button">Take a break</button>
       </div>
       <div class="fl w-45">
+        <!-- display tweet -->
         <div class="mb3 ba br2 pa2">
+          <!-- link of tweet -->
           <p class="f3 mv2 b">Tweet <a id="tweet-link" class="pointer blue f4" target="_blank">[link]</a>:</p>
           <p class="f3 mt0 fw3 w-100" id="tweet">
             placeholder
           </p>
         </div>
+        <!-- this is for the top-1 AI prediction - classification -->
         <div class="ba br2 pa2" id="classification">
           <p class="f3 tc mv2 b">Top 1 - Stance Classification</p>
           <p class="f3 tc mt0 mb2 fw3">The tweet <span style="background-color:#ff758f" id="prediction-span" class="black">supports</span> that 
@@ -44,33 +50,18 @@
           <p class="f4 tc mt0 fw3 i ">
             AI is <span STYLE="font-weight:bold" id="confidence-span">90%</span> confident about this suggestion.
           </p>
-          <!-- <div class="bg-washed-red br-pill h1 overflow-y-hidden">
-            <div class="bg-dark-red br-pill h1 shadow-1 w-10"></div>
-          </div> -->
           
           <div id="progress-bar" class="animated-progress">
             <span id="progress-bar-span" class="bg-red"></span>
           </div>
 
-        </div>
-
+          </div>
+          <!-- this is for the top-2 AI prediction - classification2 -->
         <div class="ba br2 pa2" id="classification2">
           <p class="f3 tc mv2 b">Top 2 - Stance Classification</p>
-          <!-- <span style='background-color:" + color + "'>&nbsp;" + word + "&nbsp;</span> -->
+          
           <p class="f3 tc mt0 mb2 fw3">The tweet <span style="background-color:#90e0ef" id="prediction-span2" class="black">supports</span> that 
             <span id="treatment-span2" class="bb bw2 b--gold">abc</span> is an effective treatment of Covid-19.</p>
-          <!-- <p class="f4 tc mt0 fw3 i ">
-            AI is <span STYLE="font-weight:bold" id="confidence-span2">90%</span> confident about this suggestion.
-          </p> -->
-          <!-- <div class="bg-washed-red br-pill h1 overflow-y-hidden">
-            <div class="bg-dark-red br-pill h1 shadow-1 w-10"></div>
-          </div> -->
-          <!-- <div id="progress-bar2" class="animated-progress2">
-            <span id="progress-bar-span2" class="bg-blue"></span>
-          </div> -->
-          <!-- <div id="progress-bar2" class="animated-progress2">
-            <span id="progress-bar-span2" class="bg-blue"></span>
-          </div> -->
 
         </div>
 
@@ -78,8 +69,10 @@
       <div class="fr w-45">
         <div class="mb3">
           <p class="f2 mt1 mb1 fw4">
+            <!-- questions -->
             Is the tweet a violation? <button id="guidelines-button" class="ml2 button-55" role="button">Guidelines</button>
           </p>
+          <!-- options -->
           <p class="f3 mt2 fw3">Treatment: <span id="treatment-span-2" class="bb b--gold bw2">abc</span></p>
           <input class="mb3" type="radio" id="radio-1" name="violation" value='1'>
           <label class="fw3 f3" for="radio-1">1 - clearly not violating</label><br>
@@ -95,8 +88,10 @@
       </div>
     </section>
     <section class="cf w-60 middle">
+      <!-- submit button -->
       <button id="submit-button" class="mt2 button-55 fr">Download Your Annotations</button>
     </section>
+    <!-- guidelines -->
     <div id="guidelines" class="ba bw1 bg-white overflow">
       <ul>
             <p class="f4"><span STYLE="font-weight:bold">1</span> - Clearly not in violation of Twitter's policy.</p>

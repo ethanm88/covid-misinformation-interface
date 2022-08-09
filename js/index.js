@@ -16,9 +16,14 @@ function getcolor(color1, color2, percentage) {
 }
 
 function salience_map_adaptive(tokens, scores, span_treatment) {
+    // adaptive explanation strategy:
+    // show top - 2 classification explanation
+    // here I use positive value for top-1 explanation score
+    // negative value for top-2 explanation score
     var html = "";
     for (var i = 0; i < tokens.length; i++) {
         if (span_treatment[0] <= i && i <= span_treatment[1]-1) {
+            // underline span of treatment in a tweet
             var word = tokens[i];
             var color = "#ffba08";
             html += "<u style='text-decoration-color:" + color + "'>&nbsp;" + word + "&nbsp;</u>";
@@ -28,17 +33,16 @@ function salience_map_adaptive(tokens, scores, span_treatment) {
             var score = scores[i];
             
             if (score > 0){
-                //var color = getcolor(color1, color2, score);
+                // top 1 explanation
                 var color  = "#ff758f"
             } else if (score < 0) {
-                // console.log(score);
-                // score = Math.abs(score);
-                // console.log(score);
-                // var color = getcolor(color1, color3, score);
+                // top 2 explanation
                 var color = "#90e0ef";
             } else {
+                // no explanation
                 var color = "#ffffff";
             }
+            // highlight the word span with a color
             html += "<span style='background-color:" + color + "'>&nbsp;" + word + "&nbsp;</span>";
         }
     }
@@ -69,6 +73,7 @@ function salience_map(tokens, scores, span_treatment) {
 }
 
 function underline(tokens, span_treatment) {
+    // given a span of treatment in a tweet, underline the treatment
     var html = "";
     for (var i = 0; i < tokens.length; i++) {
         if (span_treatment[0] <= i && i <= span_treatment[1]-1) {
@@ -86,6 +91,7 @@ function underline(tokens, span_treatment) {
 }
 
 function display_time(milliseconds) {
+    // convert 0.01 second timer to min and sec
     var minutes = Math.floor(milliseconds / 6000);
     var seconds = Math.floor(milliseconds /100) % 60;
     // display seconds 00
@@ -116,65 +122,66 @@ $(document).ready(function() {
         worker: true,
         download: true,
         complete: function (results) {
+            // get total number of tweets
             $("#index-span-total").html(results.data.length);
             data_length = results.data.length - 1;
-            // iterate through 1 to data_length
+            // iterate through 1 to data_length, generate a random value, to present random No AI/AI+confidence/AI+confidence+explanation conditions
             for (var i = 1; i <= data_length; i++) {
                 annotation_formats[i] = Math.random()
             }
             // console.log(annotation_formats);
-
             function display_ith_example() {
-
                 clearInterval(timer_interval);
+                //Tweet,Treatment,Probability1,Stance1,Saliency Score1,Probability2,Stance2,Saliency Score2,Span of Treatment,id,Adaptive
                 var data = results.data;
-                
                 var example = data[round_index];
-                var tweet = example[0];
-                var treatment = example[1];
-                var confidence1 = example[2];
-                var stance1 = example[3];
-                var score1 = example[4].split(" ");
-                var confidence2 = example[5];
-                var stance2 = example[6];
-                var score2 = example[7].split(" ");
-                var span_treatment = example[8].split(" ");
-                var ids = example[9];
-                var adaptive = example[10];
+                var tweet = example[0]; // tweet
+                var treatment = example[1]; //treatment
+                var confidence1 = example[2]; //probability of top-1 prediction
+                var stance1 = example[3]; // stance of top-1 prediction
+                var score1 = example[4].split(" "); // score of model explanation (saliency map) of top1 prediction
+                var confidence2 = example[5]; //probability of top-2 prediction
+                var stance2 = example[6]; // stance of top-2 prediction
+                var score2 = example[7].split(" "); // score of model explanation of top1(positive) and top2 (negative) prediction
+                var span_treatment = example[8].split(" "); // span of treatment
+                var ids = example[9]; //tweet id
+                var adaptive = example[10]; // show both (0), show top-1 (1)
                 //var adaptive = 0;
                 if (ids.includes("NA")){
+                    // error link
                     var link = "https://twitter.com/erg1951/status/13420529946328432";
                 } else {
+                    // display tweet link
                     var link = "https://twitter.com/erg1951/status/" + ids;
                     
                 }
 
                 annotation_ids[round_index] = ids
-
                 // add link to id=tweet-link
                 $("#tweet-link").attr("href", link);
-                
+                // top - 1 stance
                 if (stance1 == "Support"){
                     $("#prediction-span").html("supports");
                 }
-
+                // top - 2 stance
                 if (stance2 == "Refuting"){
                     $("#prediction-span2").html("refutes");
                 } else if (stance2 == "No Stance"){
                     $("#prediction-span2").html("has no stance");
                 }
-
+                // AI confidence score
                 $("#confidence-span").html(confidence1+"%");
                 $("#confidence-span2").html(confidence2+"%");
   
-                // scores to float
+                // top1 and top2 explanation scores to float, top-1 is positive and top-2 is negative value
                 for (var i = 0; i < score1.length; i++) {
                     score1[i] = parseFloat(score1[i]);
                 }
+                // only top 1 explanation score
                 for (var i = 0; i < score2.length; i++) {
                     score2[i] = parseFloat(score2[i]);
                 }
-                // span to int
+                // span of treatment to int
                 for (var i = 0; i < span_treatment.length; i++) {
                     span_treatment[i] = parseInt(span_treatment[i]);
                 }
@@ -182,25 +189,27 @@ $(document).ready(function() {
                     // adaptive lime
                     $("#classification").show();
                     if (adaptive == 1){
+                        // show explanation of top-1
                         $("#classification2").hide();
                         $("#tweet").html(salience_map_adaptive(tweet.split(" "), score1, span_treatment));
-                        // $("#tweet").html(salience_map(tweet.split(" "), score1, span_treatment));
                     } else {
+                        // show explanation of top-1 and top-2 prediction
                         $("#tweet").html(salience_map_adaptive(tweet.split(" "), score2, span_treatment));
+                        // show classification recommendation of top-2 prediction
                         $("#classification2").show();
                     }
                 } else if (annotation_formats[round_index] < 0.66) {
-                    // confidence
+                    // show AI prediction + confidence
                     $("#classification").show();
                     $("#classification2").hide();
                     $("#tweet").html(underline(tweet.split(" "), span_treatment));
                 } else {
-                    // human
+                    // human (no AI)
                     $("#classification").hide();
                     $("#classification2").hide();
                     $("#tweet").html(underline(tweet.split(" "), span_treatment));
                 }
-
+                
                 $("#treatment-span").html(treatment);
                 $("#treatment-span2").html(treatment);
                 $("#treatment-span-2").html(treatment);
@@ -216,13 +225,14 @@ $(document).ready(function() {
                 if (timer[round_index] == undefined) {
                     timer[round_index] = 0;
                 }
+                // display the timer in 0.01 seconds
                 display_time(timer[round_index]);
                 
                 timer_interval = setInterval(() => {
                     timer[round_index] += 1;
                     seconds = timer[round_index];
                     display_time(seconds);
-                }, 10);
+                }, 10); // use 10
                 $("#guidelines").fadeOut(0.2)
                 $("#guidelines-button").html("Guidelines");
 
@@ -243,7 +253,7 @@ $(document).ready(function() {
                 $("#progress-bar-span2").text(confidence2 + "%");
             }
             display_ith_example();
-            
+            // click previous and next tweet, jump to different examples
             $("#prev").on("click", function(e) {
                 round_index--;
                 if (round_index < 1) {
@@ -299,7 +309,7 @@ $(document).ready(function() {
                 }
                 return false;
             });
-
+            // submit results
             $("#submit-button").on("click", function(e) {
                 let data = {}
                 // iterate from 1 to data_length
