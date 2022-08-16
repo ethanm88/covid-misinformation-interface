@@ -25,7 +25,7 @@ labels = ['Supporting', 'Refuting', 'No Stance']
 
 support_res = []
 nosupport_res = []
-for split in range(360):
+for split in range(361):
     # open LIME explanation pickle file
     tmp = open_pickle('data/lime_exp_{}.pkl'.format(split))
     probability = tmp['prob'] # proba of all predictions
