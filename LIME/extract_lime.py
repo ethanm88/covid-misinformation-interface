@@ -5,14 +5,15 @@ import torch.nn.functional as F
 from lime.lime_text import LimeTextExplainer
 import os
 os.environ['TRANSFORMERS_CACHE'] = '/srv/share5/hf_cache'
-from transformers import AutoTokenizer, AutoModel, BertTokenizer
-from typing import List
+from transformers import AutoTokenizer, AutoModel, BertTokenizer, BertModel
+from typing import List, Text
 from nltk import word_tokenize
 from nltk.tokenize import MWETokenizer
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import tensor 
+from torch.utils.data import DataLoader
 import csv
 import re
 import numpy as np
@@ -58,15 +59,17 @@ if __name__ == "__main__":
     split = args.split
     
 
-    tokenizer = AutoTokenizer.from_pretrained("digitalepidemiologylab/covid-twitter-bert-v2")
-    encoder = AutoModel.from_pretrained("digitalepidemiologylab/covid-twitter-bert-v2", output_hidden_states=True)
+    encoder = BertModel.from_pretrained('/nethome/emendes3/COVID-19-Misinformation-Analysis/new_stance/covid-bert/',
+                                        output_hidden_states=True)
+    tokenizer = AutoTokenizer.from_pretrained('/nethome/emendes3/COVID-19-Misinformation-Analysis/new_stance/covid-bert/')
     cp_marker = ['<cp_start>', '<cp_end>']
     tokenizer.add_tokens(cp_marker)
     encoder.resize_token_embeddings(len(tokenizer))
     smodel = SModel(encoder, 3)
-    smodel.load_state_dict(torch.load("/srv/share4/emendes3/ctbert_stance_final.pth", map_location=torch.device('cpu')))
-    smodel.eval()
     smodel.cuda()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    smodel.load_state_dict(torch.load('/nethome/emendes3/COVID-19-Misinformation-Analysis/new_stance/ct-bert.bin', map_location=device))
+    smodel.eval()
     class_names = ['Agree','Disagree', 'No Stance']
 
     def find_e_span(inputs: tensor):
@@ -108,11 +111,10 @@ if __name__ == "__main__":
       tweet = list(reader)
     tweet = tweet[1:]
     tweet_text = [tweet[i][2] for i in range(len(tweet)) if tweet[i][2] != '']
-
     def remove_special_characters(text):
         t = ''.join([c for c in text if ord(c) < 128])
         return t
-
+    stance_probs = [float(i) for i in tweet[int(split)][-3:]]
     text = tweet_text[int(split)]
     text = remove_special_characters(text)
     text = text.replace('<a>', '<cp_start>')
@@ -135,7 +137,7 @@ if __name__ == "__main__":
     exp = explainer.explain_instance(text, predictor, num_features=20, num_samples=2000, labels=[0,1,2])
     print('Time: ', time.time() - s1)
     # probability of each stance
-    prob = exp.predict_proba
+    prob = stance_probs
     # explanation score for each stance
     exp0 = exp.as_list(0)
     exp1 = exp.as_list(1)

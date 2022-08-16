@@ -107,7 +107,7 @@ function display_time(milliseconds) {
     $(".timer").html(minutes + ":" + seconds);
 }
 
-var filename = "https://raw.githubusercontent.com/edchengg/covid-misinformation-interface/main/data/tweet_lime_withid.csv";
+var filename = "https://raw.githubusercontent.com/ehanm88/covid-misinformation-interface/main/data/tweet_lime_withid.csv";
 var round_index = 1;
 
 var annotations = {};
