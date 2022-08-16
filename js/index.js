@@ -123,7 +123,7 @@ $(document).ready(function() {
         download: true,
         complete: function (results) {
             // get total number of tweets
-            $("#index-span-total").html(results.data.length);
+            $("#index-span-total").html(results.data.length - 1);
             data_length = results.data.length - 1;
             // iterate through 1 to data_length, generate a random value, to present random No AI/AI+confidence/AI+confidence+explanation conditions
             for (var i = 1; i <= data_length; i++) {

@@ -14,7 +14,7 @@ tweet = tweet[1:]
 print(len(tweet))
 tweet_text = [tweet[i][2] for i in range(len(tweet)) if tweet[i][2] != '']
 treatment = [tweet[i][1] for i in range(len(tweet)) if tweet[i][2] != '']
-ids = [tweet[i][-1] for i in range(len(tweet)) if tweet[i][2] != '']
+ids = [tweet[i][-4] for i in range(len(tweet)) if tweet[i][2] != '']
 
 def open_pickle(filename):
     with open(filename, 'rb') as f:
