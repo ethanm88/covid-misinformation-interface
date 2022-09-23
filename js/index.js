@@ -94,6 +94,7 @@ function display_time(milliseconds) {
     // convert 0.01 second timer to min and sec
     var minutes = Math.floor(milliseconds / 6000);
     var seconds = Math.floor(milliseconds /100) % 60;
+    var cs = Math.floor(milliseconds%100)
     // display seconds 00
 
     if (seconds < 10) {
@@ -103,8 +104,11 @@ function display_time(milliseconds) {
     if (minutes < 10) {
         minutes = "0" + minutes;
     }
+    if (cs < 10) {
+        cs = "0" + cs;
+    } 
 
-    $(".timer").html(minutes + ":" + seconds);
+    $(".timer").html(minutes + ":" + seconds + ":" + cs);
 }
 
 var filename = "https://raw.githubusercontent.com/ethanm88/covid-misinformation-interface/main/data/tweet_lime_withid.csv";
@@ -129,9 +133,9 @@ $(document).ready(function() {
             for (var i = 1; i <= data_length; i++) {
                 annotation_formats[i] = Math.random()
             }
-            // console.log(annotation_formats);
             function display_ith_example() {
                 clearInterval(timer_interval);
+                timer[round_index] = 1000;
                 //Tweet,Treatment,Probability1,Stance1,Saliency Score1,Probability2,Stance2,Saliency Score2,Span of Treatment,id,Adaptive
                 var data = results.data;
                 var example = data[round_index];
@@ -145,6 +149,7 @@ $(document).ready(function() {
                 var score2 = example[7].split(" "); // score of model explanation of top1(positive) and top2 (negative) prediction
                 var span_treatment = example[8].split(" "); // span of treatment
                 var ids = example[9]; //tweet id
+                console.log(ids)
                 var adaptive = example[10]; // show both (0), show top-1 (1)
                 //var adaptive = 0;
                 if (ids.includes("NA")){
@@ -185,31 +190,13 @@ $(document).ready(function() {
                 for (var i = 0; i < span_treatment.length; i++) {
                     span_treatment[i] = parseInt(span_treatment[i]);
                 }
-                if (annotation_formats[round_index] < 0.33) {
-                    // adaptive lime
-                    $("#classification").show();
-                    if (adaptive == 1){
-                        // show explanation of top-1
-                        $("#classification2").hide();
-                        $("#tweet").html(salience_map_adaptive(tweet.split(" "), score1, span_treatment));
-                    } else {
-                        // show explanation of top-1 and top-2 prediction
-                        $("#tweet").html(salience_map_adaptive(tweet.split(" "), score2, span_treatment));
-                        // show classification recommendation of top-2 prediction
-                        $("#classification2").show();
-                    }
-                } else if (annotation_formats[round_index] < 0.66) {
-                    // show AI prediction + confidence
-                    $("#classification").show();
-                    $("#classification2").hide();
-                    $("#tweet").html(underline(tweet.split(" "), span_treatment));
-                } else {
-                    // human (no AI)
-                    $("#classification").hide();
-                    $("#classification2").hide();
-                    $("#tweet").html(underline(tweet.split(" "), span_treatment));
-                }
+
+                // show explanation of top-1
+                $("#classification2").hide();
+                $("#tweet").html(underline(tweet.split(" "), span_treatment));
+                $("#tweet").html(salience_map_adaptive(tweet.split(" "), score1, span_treatment));
                 
+
                 $("#treatment-span").html(treatment);
                 $("#treatment-span2").html(treatment);
                 $("#treatment-span-2").html(treatment);
@@ -223,16 +210,21 @@ $(document).ready(function() {
                 }
                 // check if round_index is in timer
                 if (timer[round_index] == undefined) {
-                    timer[round_index] = 0;
+                    timer[round_index] = 1000;
                 }
                 // display the timer in 0.01 seconds
                 display_time(timer[round_index]);
                 
                 timer_interval = setInterval(() => {
-                    timer[round_index] += 1;
+                    timer[round_index] -= 1;
                     seconds = timer[round_index];
                     display_time(seconds);
+                    if (seconds === 0) {
+                        clearInterval(timer_interval);
+                        $('.popup').css('display', 'flex')
+                    }
                 }, 10); // use 10
+
                 $("#guidelines").fadeOut(0.2)
                 $("#guidelines-button").html("Guidelines");
 
@@ -265,33 +257,38 @@ $(document).ready(function() {
             });
 
             $("#next").on("click", function(e) {
-                round_index++;
-                if (round_index > results.data.length - 1) {
-                    round_index = results.data.length - 1;
-                } else {
-                    $("#index-span").html(round_index);
-                    display_ith_example()
+                if (annotations[round_index] !== undefined) {
+                    $(".popup").fadeOut(1);
+                    round_index++;
+                    if (round_index > results.data.length - 1) {
+                        round_index = results.data.length - 1;
+                    } else {
+                        $("#index-span").html(round_index);
+                        display_ith_example()
+                    }
+                }
+            });
+
+            $("#next-popup").on("click", function(e) {
+                if (annotations[round_index] !== undefined) {
+                    $(".popup").fadeOut(1);
+                    round_index++;
+                    if (round_index > results.data.length - 1) {
+                        round_index = results.data.length - 1;
+                    } else {
+                        $("#index-span").html(round_index);
+                        display_ith_example()
+                    }
                 }
             });
     
             $('input[type=radio][name=violation]').change(function() {
                 annotations[round_index] = this.value;
-                // console.log(annotations);
             });
 
             $("#break-button").on("click", function(e) {
                 $('.popup').css('display', 'flex');
                 clearInterval(timer_interval);
-                console.log(timer)
-            });
-
-            $("#continue-button").on("click", function(e) {
-                $(".popup").fadeOut(1);
-                timer_interval = setInterval(() => {
-                    timer[round_index] += 1;
-                    seconds = timer[round_index];
-                    display_time(seconds);
-                }, 10);
             });
 
             $("#guidelines-button").on("click", function(e) {
@@ -323,7 +320,6 @@ $(document).ready(function() {
                     }
                     data[i] = {"ids": annotation_ids[i], "annotation": annotations[i], "time": timer[i], "format": format}
                 }
-                console.log(data)
                 // download the annotations as json
                 var json = JSON.stringify(data);
                 var blob = new Blob([json], {type: "application/json"});

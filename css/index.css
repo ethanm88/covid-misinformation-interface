@@ -96,7 +96,7 @@ progress {
 	z-index: 100;
 	position: fixed;
 	background: rgba(255, 255, 255, 0.1);
-	backdrop-filter: blur(3px);
+	backdrop-filter: blur(4px);
 	width: 100%;
 	height: 80vh;
 	display: none;
@@ -107,8 +107,8 @@ progress {
 .popup-box {
 	position: relative;
 	background: rgba(255, 255, 255, 0.8);
-	backdrop-filter: blur(3px);
-	max-width: 400;
+	backdrop-filter: blur(4px);
+	max-width: 300;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
