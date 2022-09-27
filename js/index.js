@@ -284,6 +284,14 @@ $(document).ready(function() {
     
             $('input[type=radio][name=violation]').change(function() {
                 annotations[round_index] = this.value;
+                $(".popup").fadeOut(1);
+                round_index++;
+                if (round_index > results.data.length - 1) {
+                    round_index = results.data.length - 1;
+                } else {
+                    $("#index-span").html(round_index);
+                    display_ith_example()
+                }
             });
 
             $("#break-button").on("click", function(e) {
