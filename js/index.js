@@ -319,14 +319,7 @@ $(document).ready(function() {
                 let data = {}
                 // iterate from 1 to data_length
                 for (var i = 1; i <= data_length; i++) {
-                    if (annotation_formats[i] < 0.33) {
-                        format = "adaptive explanation lime"
-                    } else if (annotation_formats[i] < 0.66) {
-                        format = "confidence"
-                    } else {
-                        format = "human"
-                    }
-                    data[i] = {"ids": annotation_ids[i], "annotation": annotations[i], "time": timer[i], "format": format}
+                    data[i] = {"ids": annotation_ids[i], "annotation": annotations[i], "time": timer[i]/100}
                 }
                 // download the annotations as json
                 var json = JSON.stringify(data);
