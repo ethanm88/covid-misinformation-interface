@@ -91,6 +91,9 @@ function underline(tokens, span_treatment) {
 }
 
 function display_time(milliseconds) {
+    // do not display negative time
+    if (milliseconds < 0)
+        milliseconds = 0;
     // convert 0.01 second timer to min and sec
     var minutes = Math.floor(milliseconds / 6000);
     var seconds = Math.floor(milliseconds /100) % 60;
@@ -116,10 +119,12 @@ var round_index = 1;
 
 var annotations = {};
 var annotation_formats = {};
-var annotation_ids = {}
+var annotation_ids = {};
+var annotation_times = {};
 var timer = {}
 var timer_interval = null
 var data_length = 0;
+var start_time = 0;
 
 $(document).ready(function() {
     Papa.parse(filename, {
@@ -135,7 +140,7 @@ $(document).ready(function() {
             }
             function display_ith_example() {
                 clearInterval(timer_interval);
-                timer[round_index] = 1000;
+                timer[round_index] = 500;
                 //Tweet,Treatment,Probability1,Stance1,Saliency Score1,Probability2,Stance2,Saliency Score2,Span of Treatment,id,Adaptive
                 var data = results.data;
                 var example = data[round_index];
@@ -214,13 +219,12 @@ $(document).ready(function() {
                 }
                 // display the timer in 0.01 seconds
                 display_time(timer[round_index]);
-                
+                start_time = Date.now()
                 timer_interval = setInterval(() => {
                     timer[round_index] -= 1;
                     seconds = timer[round_index];
                     display_time(seconds);
                     if (seconds === 0) {
-                        clearInterval(timer_interval);
                         $('.popup').css('display', 'flex')
                     }
                 }, 10); // use 10
@@ -256,34 +260,11 @@ $(document).ready(function() {
                 }
             });
 
-            $("#next").on("click", function(e) {
-                if (annotations[round_index] !== undefined) {
-                    $(".popup").fadeOut(1);
-                    round_index++;
-                    if (round_index > results.data.length - 1) {
-                        round_index = results.data.length - 1;
-                    } else {
-                        $("#index-span").html(round_index);
-                        display_ith_example()
-                    }
-                }
-            });
-
-            $("#next-popup").on("click", function(e) {
-                if (annotations[round_index] !== undefined) {
-                    $(".popup").fadeOut(1);
-                    round_index++;
-                    if (round_index > results.data.length - 1) {
-                        round_index = results.data.length - 1;
-                    } else {
-                        $("#index-span").html(round_index);
-                        display_ith_example()
-                    }
-                }
-            });
     
             $('input[type=radio][name=violation]').change(function() {
                 annotations[round_index] = this.value;
+                annotation_times[round_index] = Date.now() - start_time;
+                clearInterval(timer_interval);
                 $(".popup").fadeOut(1);
                 round_index++;
                 if (round_index > results.data.length - 1) {
@@ -319,7 +300,7 @@ $(document).ready(function() {
                 let data = {}
                 // iterate from 1 to data_length
                 for (var i = 1; i <= data_length; i++) {
-                    data[i] = {"ids": annotation_ids[i], "annotation": annotations[i], "time": timer[i]/100}
+                    data[i] = {"ids": annotation_ids[i], "annotation": annotations[i], "time": (annotation_times[i])/1000}
                 }
                 // download the annotations as json
                 var json = JSON.stringify(data);
